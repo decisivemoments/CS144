@@ -16,7 +16,11 @@ class ByteStream {
     // all, but if any of your tests are taking longer than a second,
     // that's a sign that you probably want to keep exploring
     // different approaches.
-
+    std::string buffer;
+    unsigned int capability;
+    bool input_is_end;
+    int _bytes_written;
+    int _bytes_read;
     bool _error{};  //!< Flag indicating that the stream suffered an error.
 
   public:
