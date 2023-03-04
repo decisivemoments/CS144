@@ -1,2 +1,6 @@
 /build
 /.ccls-cache
+/cmake-build-debug
+/.idea
+/.cache
+tmp

@@ -16,7 +16,9 @@ using namespace std;
 
 static constexpr unsigned NREPS = 32;
 static constexpr unsigned NSEGS = 128;
+//static constexpr unsigned NSEGS = 3;
 static constexpr unsigned MAX_SEG_LEN = 2048;
+//static constexpr unsigned MAX_SEG_LEN = 256;
 
 string read(StreamReassembler &reassembler) {
     return reassembler.stream_out().read(reassembler.stream_out().buffer_size());
@@ -45,10 +47,13 @@ int main() {
 
             for (auto [off, sz] : seq_size) {
                 string dd(d.cbegin() + off, d.cbegin() + off + sz);
+                //cout << "\npush_str\n" << dd << "\nindex:" << off << "\neof:" << (off + sz == offset) << "\nsize:" << dd.size() << "\n";
                 buf.push_substring(move(dd), off, off + sz == offset);
             }
 
             auto result = read(buf);
+            // cout << "corret str:\n" << d << "\nread:\n" << result << "\n";
+            // cout << "offset:" << offset << " read:" << buf.stream_out().bytes_written() << "\n";
             if (buf.stream_out().bytes_written() != offset) {  // read bytes
                 throw runtime_error("test 2 - number of RX bytes is incorrect");
             }

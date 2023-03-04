@@ -19,11 +19,13 @@ size_t ByteStream::write(const string &data) {
     if (buffer.length() + data.length() <= capability) {
         buffer.append(data);
         _bytes_written += data.length();
+        // printf("write in %s\n", data.c_str());
         return data.length();
     } else {
         unsigned this_write = capability - buffer.length();
         buffer.append(data.substr(0, this_write));
         _bytes_written += this_write;
+        // printf("write in %s\n", data.substr(0, this_write).c_str());
         return this_write;
     }
 }
