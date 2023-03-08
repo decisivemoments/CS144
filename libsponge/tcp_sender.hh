@@ -9,6 +9,38 @@
 #include <functional>
 #include <queue>
 
+class Timer {
+  private:
+    unsigned int _timeout;
+    unsigned int _elapsed;
+    bool _expired;
+    bool _started;
+
+  public:
+    Timer(unsigned int timeout) : _timeout(timeout), _elapsed(0), _expired(false), _started(false) {}
+
+    void tick(const size_t ms_since_last_tick) {
+        _elapsed += ms_since_last_tick;
+        // printf("elapsed:%u, timeout:%u, started:%d\n", _elapsed, _timeout, _started);
+        if (_started && _elapsed >= _timeout) {
+            _expired = true;
+        }
+    }
+
+    void reset(unsigned int timeout) {
+        _elapsed = 0;
+        _expired = false;
+        _started = true;
+        _timeout = timeout;
+    }
+
+    void close() { _started = false; }
+
+    bool expired() const { return _expired; }
+
+    bool started() const { return _started; }
+};
+
 //! \brief The "sender" part of a TCP implementation.
 
 //! Accepts a ByteStream, divides it up into segments and sends the
@@ -26,11 +58,34 @@ class TCPSender {
     //! retransmission timer for the connection
     unsigned int _initial_retransmission_timeout;
 
+    unsigned int RTO;
+
     //! outgoing stream of bytes that have not yet been sent
     ByteStream _stream;
 
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
+
+    //! the segments that has been sent but not yet acknowledged
+    std::queue<TCPSegment> _segments_in_flight{};
+
+    //! recent window size
+    uint16_t _window_size{1};
+
+    //! expected ackno
+    uint64_t _ackno{0};
+
+    //! the number of consecutive retransmissions
+    unsigned int _consecutive_retransmissions{0};
+
+    //! the number of bytes in flight
+    size_t _bytes_in_flight{0};
+
+    //! timer for retransmission
+    Timer timer;
+
+    //! whether FIN has sent
+    bool _fin_sent{false};
 
   public:
     //! Initialize a TCPSender
@@ -88,5 +143,6 @@ class TCPSender {
     WrappingInt32 next_seqno() const { return wrap(_next_seqno, _isn); }
     //!@}
 };
+
 
 #endif  // SPONGE_LIBSPONGE_TCP_SENDER_HH
