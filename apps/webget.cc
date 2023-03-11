@@ -1,5 +1,6 @@
 #include "socket.hh"
 #include "util.hh"
+#include "tcp_sponge_socket.hh"
 
 #include <cstdlib>
 #include <iostream>
@@ -17,7 +18,7 @@ void get_URL(const string &host, const string &path) {
     // (not just one call to read() -- everything) until you reach
     // the "eof" (end of file).
     Address serverAddress(host, "http");
-    TCPSocket clientSock;
+    FullStackSocket clientSock;
     clientSock.connect(serverAddress);
     std::string raw_input("GET " + path + " HTTP/1.1\r\n");
     raw_input.append("Host: " + host + "\r\n");
