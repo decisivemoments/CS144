@@ -81,7 +81,10 @@ void TCPSender::fill_window() {
 
 //! \param ackno The remote receiver's ackno (acknowledgment number)
 //! \param window_size The remote receiver's advertised window size
-void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) { 
+void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) {
+    if(_next_seqno == 0){
+        return;
+    }
     uint64_t ackno_unwrap = unwrap(ackno, _isn, _next_seqno);
     if(ackno_unwrap > _next_seqno){
         return;
@@ -109,7 +112,7 @@ void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_si
         timer.close();
     }
     _consecutive_retransmissions = 0;
-    fill_window();
+    // fill_window();
 }
 
 //! \param[in] ms_since_last_tick the number of milliseconds since the last call to this method

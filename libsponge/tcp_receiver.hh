@@ -65,6 +65,17 @@ class TCPReceiver {
     ByteStream &stream_out() { return _reassembler.stream_out(); }
     const ByteStream &stream_out() const { return _reassembler.stream_out(); }
     //!@}
+
+    //! \brief if ackno greater than fsn
+    bool ackno_greater_than_fsn() const { 
+        if (isn == -1 || fsn == -1) {
+            return false;
+        }
+        if(_reassembler.stream_out().bytes_written() + 1 == static_cast<uint64_t>(fsn)) {
+            return true;
+        }
+        return false;
+    }
 };
 
 #endif  // SPONGE_LIBSPONGE_TCP_RECEIVER_HH

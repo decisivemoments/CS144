@@ -142,6 +142,15 @@ class TCPSender {
     //! \brief relative seqno for the next byte to be sent
     WrappingInt32 next_seqno() const { return wrap(_next_seqno, _isn); }
     //!@}
+
+    //! \brief whether FIN has sent
+    bool fin_sent() const { return _fin_sent; }
+
+    //! \brief whether FIN has been acknowledged
+    bool fin_acked() const { return _fin_sent && (_ackno == _next_seqno); }
+
+    //! \brief whether SYN has sent
+    bool syn_sent() const { return _next_seqno > 0; }
 };
 
 

@@ -27,7 +27,8 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
         WrappingInt32(static_cast<uint32_t>(isn)), 
         innerBS.bytes_written());
     }
-    _reassembler.push_substring(std::string{payload.str()}, abseq - 1, isend);
+    if(abseq >= 1)
+        _reassembler.push_substring(std::string{payload.str()}, abseq - 1, isend);
     if(isend){
         fsn = abseq + seg.length_in_sequence_space() - 1;
         if(header.syn)
