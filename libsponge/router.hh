@@ -49,6 +49,22 @@ class Router {
     //! datagram's destination address.
     void route_one_datagram(InternetDatagram &dgram);
 
+    //! forwarding table entry
+    struct Route {
+        uint32_t route_prefix;
+        uint8_t prefix_length;
+        std::optional<Address> next_hop;
+        size_t interface_num;
+    };
+
+    //! forwarding table
+    std::vector<Route> _routes{};
+
+  private:
+    //! check if a forwarding table entry matches a given destination address
+    bool route_matches(const Route &route, const uint32_t dest) const;
+
+
   public:
     //! Add an interface to the router
     //! \param[in] interface an already-constructed network interface
